@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Briefcase-Version: 0.3.4
+Name: caloriecounterapp
+Formal-Name: Calorie Counter App
+App-ID: com.example.caloriecounterapp
+Version: 0.0.1
+Home-page: https://example.com/caloriecounterapp
+Author: Ellie Graves
+Author-email: ellieagraves@gmail.com
+Summary: Beeware application to assist athletes counting calories.
