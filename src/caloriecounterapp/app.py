@@ -9,19 +9,14 @@ food_headings = ['Food Name','Calories Per Serving','Food Group']
 
 athlete_headings = ['Name','Sex','Exercise Level','Age','Height(cm)','Weight(kg','Calorie Target']
 
-athletes = [('Bill','Male',17,152,78,'Moderate',2099),]
+athletes = [()]
 
 food_groups = [
     'Select','Breads', 'Cereals', 'Rice', 'Pasta', 'Vegtables', 
     'Fruit', 'Milk', 'Cheese', 'Meat', 'Fish', 'Poultry', 'Eggs'
 ]
-food_items = [
-    ('Srawberry', '15', 'Fruit'),('Blueberry', '25', 'Fruit'),
-    ('Pear', '15', 'Fruit'),('Apple', '36', 'Fruit'),
-    ('Oatmeal', '75', 'Cereal'),('Bran Flakes', '110', 'Cereal'),
-    ('Orange Juice', '15', 'Beverage'),('Milk', '82', 'Beverage'),
-    ('Grilled Chicken', '156', 'Meat'),('Hamburger', '311', 'Meat'),('Carrot', '15', 'Vegetable')
-]
+food_items = [()]
+
 
 class Athlete:
     
@@ -79,8 +74,23 @@ class CalorieCounterApp(toga.App):
         box_style_1 = Pack(direction=ROW, padding=10)
         box_style_2 = Pack(direction=COLUMN, padding=10)
         
-        # Add the content on the main window
+
+        #trying new table approach with table source example.
+        self.table1 = toga.Table(
+            headings = athlete_headings,
+            data = athletes,
+            style =Pack(flex=1),
+            
+        )
+
+        self.table2 = toga.Table(
+            headings = food_headings,
+            data = food_items,
+            style =Pack(flex=1),
         
+        )
+        
+                
         self.nameinput = toga.TextInput(
                             on_change=self.name_select,
 
@@ -215,7 +225,8 @@ class CalorieCounterApp(toga.App):
                     style=box_style_2,
                     children=[
                         toga.Divider(style=Pack(direction=COLUMN, flex=1, padding=20)),
-                        toga.Table(athlete_headings,data=athletes),
+                        #toga.Table(athlete_headings,data=athletes),
+                        self.table1,
                     ],
                 ),
                    
@@ -265,7 +276,8 @@ class CalorieCounterApp(toga.App):
                     style=box_style_2,
                     children=[
                         toga.Divider(style=Pack(direction=COLUMN, flex=1, padding=20)),
-                        toga.Table(food_headings,data=food_items),
+                        #toga.Table(food_headings,data=food_items),
+                        self.table2
                     ],
                 ),
                 toga.Box(
@@ -341,7 +353,7 @@ class CalorieCounterApp(toga.App):
         bmr = athlete.get_BMR(athlete.sex, athlete.age, athlete.height, athlete.weight)
         athlete.daily_cal_target = athlete.get_daily_cal_target(bmr,exercise_factor)
 
-        athletes.append((athlete.name, athlete.sex, int(athlete.age), int(athlete.height),int(athlete.weight),athlete.exerciselevel,athlete.daily_cal_target))
+        self.table1.data.insert(1,athlete.name, athlete.sex, int(athlete.age), int(athlete.height),int(athlete.weight),athlete.exerciselevel,athlete.daily_cal_target)
         print(athletes)
 
     def add_new_food(self, selection):  
@@ -352,7 +364,8 @@ class CalorieCounterApp(toga.App):
         #print(foodcat)
         #print(cal)
         #print(newfood)
-
+        self.table2.data.insert(1,food.food_name, int(food.cal_per_serving), food.food_category)
+        print(food_items)
         food_items.append((food.food_name, int(food.cal_per_serving), food.food_category))
         print(food_items)
         
