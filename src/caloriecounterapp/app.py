@@ -9,13 +9,14 @@ food_headings = ['Food Name','Calories Per Serving','Food Group']
 
 athlete_headings = ['Name','Sex','Exercise Level','Age','Height(cm)','Weight(kg','Calorie Target']
 
-athletes = [()]
+athletes = []
 
 food_groups = [
     'Select','Breads', 'Cereals', 'Rice', 'Pasta', 'Vegtables', 
     'Fruit', 'Milk', 'Cheese', 'Meat', 'Fish', 'Poultry', 'Eggs'
 ]
-food_items = [()]
+food_items = []
+
 
 
 class Athlete:
@@ -28,8 +29,6 @@ class Athlete:
         self.height = height
         self.weight = weight
     
-
-    #https://www.integrativepro.com/en/articles/how-to-determine-caloric-intake-needs
     def get_exerciselevel(self,exerciselevel):
         if exerciselevel=="Little-to-None":
             return 1.2
@@ -75,7 +74,7 @@ class CalorieCounterApp(toga.App):
         box_style_2 = Pack(direction=COLUMN, padding=10)
         
 
-        #trying new table approach with table source example.
+        #creatig the tables 
         self.table1 = toga.Table(
             headings = athlete_headings,
             data = athletes,
@@ -225,11 +224,10 @@ class CalorieCounterApp(toga.App):
                     style=box_style_2,
                     children=[
                         toga.Divider(style=Pack(direction=COLUMN, flex=1, padding=20)),
-                        #toga.Table(athlete_headings,data=athletes),
                         self.table1,
                     ],
                 ),
-                   
+               # Food section    
                 toga.Box(
                     style=box_style_1,
                     children=[
@@ -276,7 +274,6 @@ class CalorieCounterApp(toga.App):
                     style=box_style_2,
                     children=[
                         toga.Divider(style=Pack(direction=COLUMN, flex=1, padding=20)),
-                        #toga.Table(food_headings,data=food_items),
                         self.table2
                     ],
                 ),
@@ -299,73 +296,53 @@ class CalorieCounterApp(toga.App):
         scroller = toga.ScrollContainer(horizontal=False)
         scroller.content = self.box
         self.main_window.content = scroller
-        #everything is above this
         self.main_window.show()
-#added a way to accept the name
+
+#Functions to get the users selections and assign to variables.        
     def name_select(self, selection):
         athlete_name = selection.value       
     
     def sex_select(self, selection):
-        #global sex
         sex = selection.value
         
     def exercise_level_select(self, selection):
-        #global exercise_level
         exercise_level = selection.value     
 
     def age_select(self, selection):
-        #global age
         age = selection.value
 
     def height_select(self, selection):
-        #global height
         height = selection.value
 
     def weight_select(self, selection):
-        #global weight
         weight = selection.value
 
     def food_name_select(self, selection):
-        #global food_name
         food_name = selection.value
 
     def calories_per_serving_select(self, selection):
-        #global calories_per_serving
         calories_per_serving = selection.value
     
     def food_category_select(self, selection):
-        #global food_category
         food_category = selection.value
 
-
-    # creating a new athlete  -- I think this goes in Athlete class, but cannot see how
-
     def add_new_athlete(self, selection):
-        #name = self.nameinput.value
-        #sex  = self.sexinput.value
-        #exerciselevel = self.exerciselevel.value
-        #age = self.ageinput.value
-        #height = self.heightinput.value
-        #weight = self.weightinput.value
-        #athlete = Athlete(name,sex,exerciselevel,age,height,weight)
+#creating an athlete instance using the staging stuff we've collected.
         athlete = Athlete(self.nameinput.value,self.sexinput.value,self.exerciselevel.value,self.ageinput.value, self.heightinput.value,self.weightinput.value)
         exercise_factor = athlete.get_exerciselevel(athlete.exerciselevel)
         bmr = athlete.get_BMR(athlete.sex, athlete.age, athlete.height, athlete.weight)
         athlete.daily_cal_target = athlete.get_daily_cal_target(bmr,exercise_factor)
-
+#below is where we put the new athlete to the toga athlete table
         self.table1.data.insert(0,athlete.name, athlete.sex, int(athlete.age), int(athlete.height),int(athlete.weight),athlete.exerciselevel,athlete.daily_cal_target)
+#Below is where we append to athlete , a list of tuples
+        athletes.append((athlete.name, athlete.sex, int(athlete.age), int(athlete.height),int(athlete.weight),athlete.exerciselevel,athlete.daily_cal_target))
         print(athletes)
 
     def add_new_food(self, selection):  
-        #food = self.newfoodinput.value
-        #cal = self.calperserv.value
-        #foodcat = self.foodcat.value
         food = Food(self.newfoodinput.value, self.calperserv.value, self.foodcat.value)
-        #print(foodcat)
-        #print(cal)
-        #print(newfood)
+#Below is where we append to food , a list of tuples
         self.table2.data.insert(0,food.food_name, int(food.cal_per_serving), food.food_category)
-        print(food_items)
+#Below is where we append to food, a list of tuples
         food_items.append((food.food_name, int(food.cal_per_serving), food.food_category))
         print(food_items)
         
