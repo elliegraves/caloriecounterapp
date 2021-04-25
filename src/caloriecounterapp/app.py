@@ -7,28 +7,40 @@ from toga.style import Pack
 
 food_headings = ['Food Name','Calories Per Serving','Food Group']
 
-athlete_headings = ['Name','Sex','Exercise Level','Age','Height(cm)','Weight(kg','Calorie Target']
-
-athletes = []
+athlete_headings = ['First Name', 'Last Name', 'Sex','Exercise Level','Age','Height(cm)','Weight(kg','Calorie Target']
 
 food_groups = [
     'Select','Breads', 'Cereals', 'Rice', 'Pasta', 'Vegtables', 
     'Fruit', 'Milk', 'Cheese', 'Meat', 'Fish', 'Poultry', 'Eggs'
 ]
-food_items = []
-
-
 
 class Athlete:
     
-    def __init__(self, name, sex, exerciselevel, age, height, weight):
-        self.name = name
+    def __init__(self, first_name, last_name, sex, exerciselevel, age, height, weight):
+        self.first_name = first_name
+        self.last_name = last_name
         self.sex = sex
         self.exerciselevel = exerciselevel
         self.age = age
         self.height = height
         self.weight = weight
+
     
+
+    @property
+    def magic(self):
+       return self.age * self.height
+
+    @property
+    def fullname(self):
+        return'{} {}'.format(self.first_name, self.last_name)
+
+    @fullname.setter
+    def fullname(self, name):
+        first_name, last_name = name.split(' ')
+        self.first_name = first_name
+        self.last_name = last_name
+
     def get_exerciselevel(self,exerciselevel):
         if exerciselevel=="Little-to-None":
             return 1.2
@@ -77,21 +89,23 @@ class CalorieCounterApp(toga.App):
         #creatig the tables 
         self.table1 = toga.Table(
             headings = athlete_headings,
-            data = athletes,
             style =Pack(flex=1),
-            
         )
 
         self.table2 = toga.Table(
             headings = food_headings,
-            data = food_items,
             style =Pack(flex=1),
         
         )
         
                 
-        self.nameinput = toga.TextInput(
-                            on_change=self.name_select,
+
+        self.first_name_input = toga.TextInput(
+                            on_change=self.first_name_select,
+
+                        )
+        self.last_name_input = toga.TextInput(
+                            on_change=self.last_name_select,
 
                         )   
         self.sexinput = toga.Selection(
@@ -148,10 +162,20 @@ class CalorieCounterApp(toga.App):
                     style=box_style_1,
                     children=[
                         toga.Label(
-                            "Athlete's name:",
+                            "Athlete's first name:",
                             style=label_style,
                         ),
-                        self.nameinput
+                        self.first_name_input
+                    ],
+                ),
+                toga.Box(
+                    style=box_style_1,
+                    children=[
+                        toga.Label(
+                            "Athlete's last name:",
+                            style=label_style,
+                        ),
+                        self.last_name_input
                     ],
                 ),
                
@@ -299,9 +323,12 @@ class CalorieCounterApp(toga.App):
         self.main_window.show()
 
 #Functions to get the users selections and assign to variables.        
-    def name_select(self, selection):
-        athlete_name = selection.value       
-    
+    def first_name_select(self, selection):
+        first_name = selection.value   
+
+    def last_name_select(self, selection):
+        last_name = selection.value
+
     def sex_select(self, selection):
         sex = selection.value
         
@@ -328,24 +355,24 @@ class CalorieCounterApp(toga.App):
 
     def add_new_athlete(self, selection):
 #creating an athlete instance using the staging stuff we've collected.
-        athlete = Athlete(self.nameinput.value,self.sexinput.value,self.exerciselevel.value,self.ageinput.value, self.heightinput.value,self.weightinput.value)
+        athlete = Athlete(self.first_name_input.value, self.last_name_input.value,self.sexinput.value,self.exerciselevel.value,self.ageinput.value, self.heightinput.value,self.weightinput.value)
         exercise_factor = athlete.get_exerciselevel(athlete.exerciselevel)
         bmr = athlete.get_BMR(athlete.sex, athlete.age, athlete.height, athlete.weight)
         athlete.daily_cal_target = athlete.get_daily_cal_target(bmr,exercise_factor)
-#below is where we put the new athlete to the toga athlete table
-        self.table1.data.insert(0,athlete.name, athlete.sex, int(athlete.age), int(athlete.height),int(athlete.weight),athlete.exerciselevel,athlete.daily_cal_target)
-#Below is where we append to athlete , a list of tuples
-        athletes.append((athlete.name, athlete.sex, int(athlete.age), int(athlete.height),int(athlete.weight),athlete.exerciselevel,athlete.daily_cal_target))
-        print(athletes)
+    
+        self.table1.data.insert(0,athlete.first_name, athlete.last_name,athlete.sex, int(athlete.age), int(athlete.height),int(athlete.weight),athlete.exerciselevel,athlete.daily_cal_target)
 
     def add_new_food(self, selection):  
         food = Food(self.newfoodinput.value, self.calperserv.value, self.foodcat.value)
-#Below is where we append to food , a list of tuples
+
         self.table2.data.insert(0,food.food_name, int(food.cal_per_serving), food.food_category)
-#Below is where we append to food, a list of tuples
-        food_items.append((food.food_name, int(food.cal_per_serving), food.food_category))
-        print(food_items)
+
         
+    e = Athlete("Ellie", "Graves", "Female", "Heavy", 16, 68, 100)
+    print(e.magic)
+    print(e.fullname)
+    e.fullname = 'Mickey Mouse'
+    print(e.first_name)
 def main():
     # App name and namespace
     return CalorieCounterApp("Selection", "org.beeware.selection")
