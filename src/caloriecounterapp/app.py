@@ -7,7 +7,7 @@ from toga.style import Pack
 
 food_headings = ['Food Name','Calories Per Serving','Food Group']
 
-athlete_headings = ['First Name', 'Last Name', 'Sex','Exercise Level','Age','Height(cm)','Weight(kg','Calorie Target']
+athlete_headings = ['First Name', 'Last Name', 'Sex','Exercise Level','Age','Height(cm)','Weight(kg','Calorie Target',]
 
 food_groups = [
     'Select','Breads', 'Cereals', 'Rice', 'Pasta', 'Vegtables', 
@@ -40,30 +40,30 @@ class Athlete:
         first_name, last_name = name.split(' ')
         self.first_name = first_name
         self.last_name = last_name
-
-    def get_exerciselevel(self,exerciselevel):
-        if exerciselevel=="Little-to-None":
+    @property
+    def exercisefactor(self):
+        if self.exerciselevel=="Little-to-None":
             return 1.2
-        elif exerciselevel=="Light":
+        elif self.exerciselevel=="Light":
             return 1.375
-        elif exerciselevel=="Moderate":
+        elif self.exerciselevel=="Moderate":
             return 1.55
-        elif exerciselevel=="Heavy":
+        elif self.exerciselevel=="Heavy":
             return 1.725
         else:
             return 1.725
 
-
-    def get_BMR(self,sex,age,height,weight):
-        if sex=="Male":
-            return (10.0 * float(weight)) + (6.25 * float(height)) - (5.0 * float(age)) + 5.0
-        elif sex == "Female":
-            return (10.0 * float(weight)) + (6.25 * float(height)) - (5.0 * float(age)) - 161
+    @property
+    def BMR(self):
+        if self.sex=="Male":
+            return (10.0 * float(self.weight)) + (6.25 * float(self.height)) - (5.0 * float(self.age)) + 5.0
+        elif self.sex == "Female":
+            return (10.0 * float(self.weight)) + (6.25 * float(self.height)) - (5.0 * float(self.age)) - 161
         else:
             return "error"
-
-    def get_daily_cal_target(self,bmr,exercise_level):
-        return bmr * exercise_level
+    @property
+    def daily_cal_target(self):
+        return self.bmr * self.exercisefactor
 
 class Food:
     
@@ -88,8 +88,9 @@ class CalorieCounterApp(toga.App):
 
         #creatig the tables 
         self.table1 = toga.Table(
-            headings = athlete_headings,
-            style =Pack(flex=1),
+            headings = ['First Name', 'Last Name', 'Sex','Exercise Level','Age','Height(cm)','Weight(kg','Calorie Target',],
+            accessors = ["first_name", "last_name", "sex", 'exerciselevel', 'age', 'height','weight', 'daily_cal_target',],
+            style =Pack(flex=1)
         )
 
         self.table2 = toga.Table(
@@ -356,11 +357,10 @@ class CalorieCounterApp(toga.App):
     def add_new_athlete(self, selection):
 #creating an athlete instance using the staging stuff we've collected.
         athlete = Athlete(self.first_name_input.value, self.last_name_input.value,self.sexinput.value,self.exerciselevel.value,self.ageinput.value, self.heightinput.value,self.weightinput.value)
-        exercise_factor = athlete.get_exerciselevel(athlete.exerciselevel)
-        bmr = athlete.get_BMR(athlete.sex, athlete.age, athlete.height, athlete.weight)
+        '''bmr = athlete.get_BMR(athlete.sex, athlete.age, athlete.height, athlete.weight)
         athlete.daily_cal_target = athlete.get_daily_cal_target(bmr,exercise_factor)
-    
-        self.table1.data.insert(0,athlete.first_name, athlete.last_name,athlete.sex, int(athlete.age), int(athlete.height),int(athlete.weight),athlete.exerciselevel,athlete.daily_cal_target)
+    '''
+        self.table1.data.insert(0,athlete)
 
     def add_new_food(self, selection):  
         food = Food(self.newfoodinput.value, self.calperserv.value, self.foodcat.value)
